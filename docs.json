@@ -11,13 +11,66 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "Guides",
+        "tab": "Web",
         "groups": [
           {
-            "group": "Getting Started",
+            "group": "Getting started",
             "pages": [
               "index",
-              "quickstart"
+              "web/how-it-works",
+              "web/first-search",
+              "web/plans",
+              "web/build-with-api-and-mcp"
+            ]
+          },
+          {
+            "group": "Searching",
+            "pages": [
+              {
+                "group": "Search modes",
+                "pages": [
+                  "web/search-modes",
+                  "web/quick-search",
+                  "web/pro-search",
+                  "web/deep-review",
+                  "web/research-agent",
+                  "web/threads"
+                ]
+              },
+              "web/filters",
+              "web/incognito-mode",
+              "web/libkey",
+              "web/corpus",
+              "web/search-history"
+            ]
+          },
+          {
+            "group": "Reading and analyzing results",
+            "pages": [
+              "web/consensus-meter",
+              "web/study-snapshot",
+              "web/diagrams-in-analysis",
+              "web/results-view",
+              "web/chat-with-full-text",
+              "web/upload-and-chat",
+              "web/citation-graph",
+              "web/citations"
+            ]
+          },
+          {
+            "group": "My Library",
+            "pages": [
+              "web/library",
+              "web/collections",
+              "web/sharing-collections",
+              "web/zotero-import",
+              "web/reference-managers"
+            ]
+          },
+          {
+            "group": "Data and trust",
+            "pages": [
+              "web/data-and-security"
             ]
           }
         ]

@@ -1,0 +1,59 @@
+---
+title: "How Consensus works"
+description: "The corpus, the ranking, and the grounded citations behind every Consensus answer."
+---
+
+Consensus is an AI search engine for research. When you ask a question, it searches over 200 million peer-reviewed papers, ranks the most relevant evidence, and summarizes it with citations that link back to the original studies.
+
+Three things set that apart from a general chatbot or a web search engine built for the open internet: the corpus it draws on, how it ranks results, and how it grounds every answer in real papers.
+
+## The corpus
+
+Consensus searches **over 200 million peer-reviewed papers**, drawn from [Semantic Scholar](https://www.semanticscholar.org), [OpenAlex](https://openalex.org), and [PubMed](https://pubmed.ncbi.nlm.nih.gov).
+
+The corpus is peer-reviewed by default. Preprints and other sources that have not been through peer review are excluded unless you choose to include them, which keeps your results anchored to work that has cleared editorial and peer scrutiny.
+
+<Note>
+  Newly published papers can take time to appear. The index refreshes on a lag, so the very latest paper on a topic may not be searchable the day it is published.
+</Note>
+
+Learn more about coverage and sources in [The corpus](/web/corpus).
+
+## How results are ranked
+
+Consensus uses hybrid ranking that combines two kinds of search:
+
+- **Vector (semantic) search** matches the meaning of your question, so a paper can rank highly even when it does not use your exact words.
+- **Lexical (keyword) search** matches the specific terms you typed.
+
+The blended results are then weighted by three signals:
+
+- **Relevance** to the question you asked
+- **Study quality**
+- **Recency**
+
+The result is a list where the papers at the top are the ones most likely to actually answer your question. The [search mode](/web/search-modes) you choose (Quick, Pro, or Deep review) decides how many of those papers Consensus reads and how deeply it analyzes them.
+
+## Grounded, cited answers
+
+Every AI summary in Consensus is grounded in specific papers. Claims point back to the studies they come from, and each citation links out to the source by DOI where one exists. Consensus reads and cites real papers, so its references are traceable rather than invented.
+
+For yes/no questions, the [Consensus Meter](/web/consensus-meter) aggregates how the top papers come down: how many say yes, no, or possibly, giving you a fast read on the state of the evidence.
+
+<Warning>
+  AI summaries are model-generated. For high-stakes decisions, follow the citations and read the source papers. Consensus is not a substitute for professional medical, legal, or financial advice. See [Data and trust](/web/data-and-security) for more.
+</Warning>
+
+## Go deeper
+
+<CardGroup cols={3}>
+  <Card title="The corpus" icon="database" href="/web/corpus">
+    What Consensus indexes, where it comes from, and what stays out.
+  </Card>
+  <Card title="Search modes" icon="layer-group" href="/web/search-modes">
+    Quick, Pro, and Deep review, and how to pick the right one.
+  </Card>
+  <Card title="Consensus Meter" icon="gauge" href="/web/consensus-meter">
+    How Consensus reads the balance of evidence on a yes/no question.
+  </Card>
+</CardGroup>
