@@ -11,117 +11,24 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "Get Started",
+        "tab": "Guides",
         "groups": [
           {
-            "group": "Get Started",
+            "group": "Getting Started",
             "pages": [
               "index",
-              "quickstart",
-              "authentication",
-              "rate-limits-and-tiers",
-              "core-concepts"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "Web",
-        "groups": [
-          {
-            "group": "Web app",
-            "pages": [
-              "web/overview",
-              "web/searching",
-              "web/understanding-results",
-              "web/citations-and-collections"
+              "quickstart"
             ]
           }
         ]
       },
       {
         "tab": "API Reference",
-        "openapi": "openapi.json",
-        "groups": [
-          {
-            "group": "Overview",
-            "pages": [
-              "api-reference/overview",
-              "api-reference/quickstart",
-              "api-reference/filters",
-              "api-reference/pagination",
-              "api-reference/errors"
-            ]
-          },
-          {
-            "group": "Endpoints",
-            "pages": [
-              "api-reference/endpoints/search",
-              "api-reference/endpoints/quick-search"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "MCP",
-        "groups": [
-          {
-            "group": "MCP server",
-            "pages": [
-              "mcp/overview",
-              "mcp/quickstart",
-              "mcp/connect",
-              "mcp/tools",
-              "mcp/authentication"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "Enterprise",
-        "groups": [
-          {
-            "group": "Enterprise",
-            "pages": [
-              "enterprise/overview",
-              "enterprise/security",
-              "enterprise/full-text-and-fields",
-              "enterprise/support"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "Use Cases",
-        "groups": [
-          {
-            "group": "Use cases",
-            "pages": [
-              "use-cases/overview",
-              "use-cases/research-synthesis",
-              "use-cases/literature-review",
-              "use-cases/fact-checking",
-              "use-cases/paper-discovery",
-              "use-cases/cross-study-comparison"
-            ]
-          },
-          {
-            "group": "Learn",
-            "pages": [
-              "use-cases/resources",
-              "use-cases/workshops"
-            ]
-          }
-        ]
+        "openapi": "openapi.json"
       }
     ],
     "global": {
       "anchors": [
-        {
-          "anchor": "Get API key",
-          "href": "https://consensus.app/subscription/api/",
-          "icon": "key"
-        },
         {
           "anchor": "Help Center",
           "href": "https://help.consensus.app",
@@ -148,8 +55,8 @@
     ],
     "primary": {
       "type": "button",
-      "label": "Get API key",
-      "href": "https://consensus.app/subscription/api/"
+      "label": "Go to Consensus",
+      "href": "https://consensus.app"
     }
   },
   "contextual": {

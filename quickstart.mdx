@@ -1,103 +1,47 @@
 ---
 title: "Quickstart"
-description: "Run your first Consensus search in minutes, over the REST API or an MCP client."
+description: "Begin with a guide on the fastest path to a successful outcome"
 ---
 
-Consensus gives you two ways to search over 200 million peer-reviewed papers from your own code and tools. Pick the path that fits what you are building:
+Describe how someone begins using your product. What is the first thing they need to do? Are there any prerequisites?
 
-- **REST API**: a JSON endpoint you call with an API key. Best for backends, scripts, and data pipelines.
-- **MCP**: a hosted server that plugs Consensus into LLM hosts and agents (Claude, ChatGPT, Cursor) as a tool. Best for assistants and agentic workflows.
+A quickstart should take someone from zero to using your product. They'll get a quick win and a sense of what they can accomplish.
 
-<Tabs>
-  <Tab title="REST API">
-    Call a single JSON endpoint with your API key. First, create a key from the [API dashboard](https://consensus.app/subscription/api/).
+## Prerequisites
 
-    <Steps>
-      <Step title="Set your key as an environment variable">
-        Keep the key out of your source code and shell history.
+Before you begin, you must have:
 
-        ```bash
-        export CONSENSUS_API_KEY="your_api_key_here"
-        ```
-      </Step>
-      <Step title="Make your first search">
-        Call `GET /v1/search` with your query. The key goes in the `x-api-key` header.
+- Requirement one (for example, Node.js 18+, a free account, an API key)
+- Requirement two (for example, a compatible device, a compatible browser, a compatible operating system)
 
-        ```bash
-        curl -G https://api.consensus.app/v1/search \
-          -H "x-api-key: $CONSENSUS_API_KEY" \
-          --data-urlencode "query=does creatine improve muscle strength" \
-          --data-urlencode "page_size=5"
-        ```
-      </Step>
-      <Step title="Read the results">
-        The response is JSON. `results` is an array of ranked papers, each with a title, authors, abstract, journal, citation count, and a link to the source. The top-level `page`, `is_end`, and `next_page` fields drive pagination.
+## Get started
 
-        ```json
-        {
-          "results": [
-            {
-              "title": "Effects of creatine supplementation on muscular strength ...",
-              "authors": ["..."],
-              "abstract": "This meta-analysis evaluated ...",
-              "journal_name": "Journal of Strength and Conditioning Research",
-              "publish_year": 2022,
-              "citation_count": 128,
-              "url": "https://..."
-            }
-          ],
-          "page": 0,
-          "page_size": 5,
-          "is_end": false,
-          "next_page": 1
-        }
-        ```
-      </Step>
-    </Steps>
+<Steps>
+  <Step title="Install">
+    Describe how to install your product or sign up.
 
-    <Tip>
-      See the [API quickstart](/api-reference/quickstart) for the response explained field by field, plus Python and JavaScript examples.
-    </Tip>
-  </Tab>
+    ```bash
+    npm install your-package
+    ```
+  </Step>
+  <Step title="Configure">
+    Describe any setup or configuration needed before first use.
 
-  <Tab title="MCP">
-    Connect the Consensus MCP server to a client, then ask a research question in natural language. Sign-in runs over OAuth in your browser, so there is no API key to paste.
+    ```bash
+    your-cli init
+    ```
+  </Step>
+  <Step title="Run it">
+    Show the first thing a user does to see it working.
 
-    <Steps>
-      <Step title="Connect a client">
-        Use whichever client you already work in.
+    ```bash
+    your-cli start
+    ```
+  </Step>
+</Steps>
 
-        **Claude Code**: run this in your terminal. A browser window opens for you to sign in to Consensus and approve access.
+<Tip>
+  Give people a way to get help. This could be a link to a support page, a chat with a customer support agent, or a forum for your product.
 
-        ```bash
-        claude mcp add --transport http consensus https://mcp.consensus.app/mcp
-        ```
-
-        **ChatGPT**: open the sidebar, go to **Apps**, search for **Consensus**, and connect. Results render in an interactive widget.
-      </Step>
-      <Step title="Ask a research question">
-        Prompt your assistant naturally. It calls the Consensus `search` tool and returns ranked papers with grounded, DOI-linked citations.
-
-        > Use Consensus to find recent randomized trials on whether creatine improves muscle strength.
-      </Step>
-    </Steps>
-
-    <Tip>
-      More clients (Cursor, Codex, VS Code, Windsurf) and full configuration are in [Connect a client](/mcp/connect).
-    </Tip>
-  </Tab>
-</Tabs>
-
-## Next steps
-
-<CardGroup cols={3}>
-  <Card title="API quickstart" icon="rocket" href="/api-reference/quickstart">
-    Your first authenticated request, with the response explained field by field.
-  </Card>
-  <Card title="Connect an MCP client" icon="plug" href="/mcp/connect">
-    Add Consensus to Claude, ChatGPT, Cursor, Codex, VS Code, or Windsurf.
-  </Card>
-  <Card title="Use cases" icon="lightbulb" href="/use-cases/overview">
-    Working recipes: research synthesis, literature review, fact-checking, and more.
-  </Card>
-</CardGroup>
+  Example: Need help? Reach out to us at [support@yourcompany.com](mailto:support@yourcompany.com).
+</Tip>
