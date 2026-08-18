@@ -1,0 +1,1440 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Consensus API",
+    "version": "1.0"
+  },
+  "paths": {
+    "/v1/search": {
+      "get": {
+        "summary": "Query for relevant papers.",
+        "description": "The supported endpoint for searching academic papers. Use this instead of the legacy `/v1/quick_search` endpoint, which is deprecated and will be removed on 2027-02-07.",
+        "operationId": "v1_search",
+        "security": [
+          {
+            "XApiKeyHeader": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Query for research papers.",
+              "title": "Query"
+            },
+            "description": "Query for research papers."
+          },
+          {
+            "name": "year_min",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Exclude papers before this year.",
+              "title": "Year Min"
+            },
+            "description": "Exclude papers before this year."
+          },
+          {
+            "name": "year_max",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Exclude papers after this year.",
+              "title": "Year Max"
+            },
+            "description": "Exclude papers after this year."
+          },
+          {
+            "name": "month_min",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "maximum": 12,
+                  "minimum": 1
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Exclude papers before this month within year_min. Requires year_min.",
+              "title": "Month Min"
+            },
+            "description": "Exclude papers before this month within year_min. Requires year_min."
+          },
+          {
+            "name": "month_max",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "maximum": 12,
+                  "minimum": 1
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Exclude papers after this month within year_max. Requires year_max.",
+              "title": "Month Max"
+            },
+            "description": "Exclude papers after this month within year_max. Requires year_max."
+          },
+          {
+            "name": "study_types",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/StudyTypeKeywordEnum"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Only include these study types.",
+              "title": "Study Types"
+            },
+            "description": "Only include these study types."
+          },
+          {
+            "name": "human",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Only include human studies.",
+              "title": "Human"
+            },
+            "description": "Only include human studies."
+          },
+          {
+            "name": "controlled",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Only include controlled studies.",
+              "title": "Controlled"
+            },
+            "description": "Only include controlled studies."
+          },
+          {
+            "name": "sample_size_min",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Exclude studies with smaller sample sizes.",
+              "title": "Sample Size Min"
+            },
+            "description": "Exclude studies with smaller sample sizes."
+          },
+          {
+            "name": "sjr_min",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "maximum": 4,
+                  "minimum": 1
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Exclude journals in better quartiles, where 1 is the best quartile.",
+              "title": "Sjr Min"
+            },
+            "description": "Exclude journals in better quartiles, where 1 is the best quartile."
+          },
+          {
+            "name": "sjr_max",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "maximum": 4,
+                  "minimum": 1
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Exclude journals in lesser quartiles, where 1 is the best quartile.",
+              "title": "Sjr Max"
+            },
+            "description": "Exclude journals in lesser quartiles, where 1 is the best quartile."
+          },
+          {
+            "name": "citation_min",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Exclude papers with fewer citations.",
+              "title": "Citation Min"
+            },
+            "description": "Exclude papers with fewer citations."
+          },
+          {
+            "name": "duration_min",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Minimum study duration (in days).",
+              "title": "Duration Min"
+            },
+            "description": "Minimum study duration (in days)."
+          },
+          {
+            "name": "duration_max",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Maximum study duration (in days).",
+              "title": "Duration Max"
+            },
+            "description": "Maximum study duration (in days)."
+          },
+          {
+            "name": "exclude_preprints",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Exclude preprints, only include peer-reviewed papers.",
+              "title": "Exclude Preprints"
+            },
+            "description": "Exclude preprints, only include peer-reviewed papers."
+          },
+          {
+            "name": "open_access",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Only include open-access papers.",
+              "title": "Open Access"
+            },
+            "description": "Only include open-access papers."
+          },
+          {
+            "name": "publisher_name",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Comma-separated publisher display names to filter by.",
+              "title": "Publisher Name"
+            },
+            "description": "Comma-separated publisher display names to filter by."
+          },
+          {
+            "name": "domain",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Comma-separated academic field short codes, not email or web domains, to filter by. Valid values: med, bio, cs, chem, psych, phys, mat, eng, env, bus, econ, math, poli, agri, edu, soc, geol, geog, hist, art, philo, law, ling.",
+              "title": "Domain"
+            },
+            "description": "Comma-separated academic field short codes, not email or web domains, to filter by. Valid values: med, bio, cs, chem, psych, phys, mat, eng, env, bus, econ, math, poli, agri, edu, soc, geol, geog, hist, art, philo, law, ling."
+          },
+          {
+            "name": "country",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Comma-separated ISO 3166-1 alpha-2 country codes (e.g. us, gb) to filter to those countries of study. Unknown codes are ignored; if none resolve, the filter is not applied.",
+              "title": "Country"
+            },
+            "description": "Comma-separated ISO 3166-1 alpha-2 country codes (e.g. us, gb) to filter to those countries of study. Unknown codes are ignored; if none resolve, the filter is not applied."
+          },
+          {
+            "name": "journal_name",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Preferred journal name (e.g. \"Nature\"). Results from matching journals are surfaced higher; this does not exclude other journals.",
+              "title": "Journal Name"
+            },
+            "description": "Preferred journal name (e.g. \"Nature\"). Results from matching journals are surfaced higher; this does not exclude other journals."
+          },
+          {
+            "name": "clinical_guideline",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter to papers classified as clinical guidelines.",
+              "title": "Clinical Guideline"
+            },
+            "description": "Filter to papers classified as clinical guidelines."
+          },
+          {
+            "name": "medical_mode",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter to top medical journals and guidelines, about 8M documents",
+              "title": "Medical Mode"
+            },
+            "description": "Filter to top medical journals and guidelines, about 8M documents"
+          },
+          {
+            "name": "include_semantic_score",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Return the semantic score for each result when true. The score is only returned for the top 50 results.",
+              "title": "Include Semantic Score"
+            },
+            "description": "Return the semantic score for each result when true. The score is only returned for the top 50 results."
+          },
+          {
+            "name": "include_full_text_chunks",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Return query-relevant full-text excerpts. Enterprise customers only.",
+              "default": false,
+              "title": "Include Full Text Chunks"
+            },
+            "description": "Return query-relevant full-text excerpts. Enterprise customers only."
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "maximum": 49,
+                  "minimum": 0
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Page number of results to return (0-indexed, max 50 pages).",
+              "title": "Page"
+            },
+            "description": "Page number of results to return (0-indexed, max 50 pages)."
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Number of papers to return per page. Defaults to 20. The maximum depends on your plan; a larger value is capped to your plan's maximum (see the page_size returned in the response).",
+              "title": "Page Size"
+            },
+            "description": "Number of papers to return per page. Defaults to 20. The maximum depends on your plan; a larger value is capped to your plan's maximum (see the page_size returned in the response)."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuickSearchResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/quick_search": {
+      "get": {
+        "summary": "Query for relevant papers (legacy).",
+        "description": "This endpoint is deprecated. Use `GET /v1/search` instead. It will be removed on 2027-02-07.",
+        "operationId": "v1_quick_search",
+        "deprecated": true,
+        "security": [
+          {
+            "XApiKeyHeader": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Query for research papers.",
+              "title": "Query"
+            },
+            "description": "Query for research papers."
+          },
+          {
+            "name": "year_min",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Exclude papers before this year.",
+              "title": "Year Min"
+            },
+            "description": "Exclude papers before this year."
+          },
+          {
+            "name": "year_max",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Exclude papers after this year.",
+              "title": "Year Max"
+            },
+            "description": "Exclude papers after this year."
+          },
+          {
+            "name": "month_min",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "maximum": 12,
+                  "minimum": 1
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Exclude papers before this month within year_min. Requires year_min.",
+              "title": "Month Min"
+            },
+            "description": "Exclude papers before this month within year_min. Requires year_min."
+          },
+          {
+            "name": "month_max",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "maximum": 12,
+                  "minimum": 1
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Exclude papers after this month within year_max. Requires year_max.",
+              "title": "Month Max"
+            },
+            "description": "Exclude papers after this month within year_max. Requires year_max."
+          },
+          {
+            "name": "study_types",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/StudyTypeKeywordEnum"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Only include these study types.",
+              "title": "Study Types"
+            },
+            "description": "Only include these study types."
+          },
+          {
+            "name": "human",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Only include human studies.",
+              "title": "Human"
+            },
+            "description": "Only include human studies."
+          },
+          {
+            "name": "controlled",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Only include controlled studies.",
+              "title": "Controlled"
+            },
+            "description": "Only include controlled studies."
+          },
+          {
+            "name": "sample_size_min",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Exclude studies with smaller sample sizes.",
+              "title": "Sample Size Min"
+            },
+            "description": "Exclude studies with smaller sample sizes."
+          },
+          {
+            "name": "sjr_min",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "maximum": 4,
+                  "minimum": 1
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Exclude journals in better quartiles, where 1 is the best quartile.",
+              "title": "Sjr Min"
+            },
+            "description": "Exclude journals in better quartiles, where 1 is the best quartile."
+          },
+          {
+            "name": "sjr_max",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "maximum": 4,
+                  "minimum": 1
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Exclude journals in lesser quartiles, where 1 is the best quartile.",
+              "title": "Sjr Max"
+            },
+            "description": "Exclude journals in lesser quartiles, where 1 is the best quartile."
+          },
+          {
+            "name": "citation_min",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Exclude papers with fewer citations.",
+              "title": "Citation Min"
+            },
+            "description": "Exclude papers with fewer citations."
+          },
+          {
+            "name": "duration_min",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Minimum study duration (in days).",
+              "title": "Duration Min"
+            },
+            "description": "Minimum study duration (in days)."
+          },
+          {
+            "name": "duration_max",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Maximum study duration (in days).",
+              "title": "Duration Max"
+            },
+            "description": "Maximum study duration (in days)."
+          },
+          {
+            "name": "exclude_preprints",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Exclude preprints, only include peer-reviewed papers.",
+              "title": "Exclude Preprints"
+            },
+            "description": "Exclude preprints, only include peer-reviewed papers."
+          },
+          {
+            "name": "open_access",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Only include open-access papers.",
+              "title": "Open Access"
+            },
+            "description": "Only include open-access papers."
+          },
+          {
+            "name": "publisher_name",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Comma-separated publisher display names to filter by.",
+              "title": "Publisher Name"
+            },
+            "description": "Comma-separated publisher display names to filter by."
+          },
+          {
+            "name": "domain",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Comma-separated academic field short codes, not email or web domains, to filter by. Valid values: med, bio, cs, chem, psych, phys, mat, eng, env, bus, econ, math, poli, agri, edu, soc, geol, geog, hist, art, philo, law, ling.",
+              "title": "Domain"
+            },
+            "description": "Comma-separated academic field short codes, not email or web domains, to filter by. Valid values: med, bio, cs, chem, psych, phys, mat, eng, env, bus, econ, math, poli, agri, edu, soc, geol, geog, hist, art, philo, law, ling."
+          },
+          {
+            "name": "country",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Comma-separated ISO 3166-1 alpha-2 country codes (e.g. us, gb) to filter to those countries of study. Unknown codes are ignored; if none resolve, the filter is not applied.",
+              "title": "Country"
+            },
+            "description": "Comma-separated ISO 3166-1 alpha-2 country codes (e.g. us, gb) to filter to those countries of study. Unknown codes are ignored; if none resolve, the filter is not applied."
+          },
+          {
+            "name": "journal_name",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Preferred journal name (e.g. \"Nature\"). Results from matching journals are surfaced higher; this does not exclude other journals.",
+              "title": "Journal Name"
+            },
+            "description": "Preferred journal name (e.g. \"Nature\"). Results from matching journals are surfaced higher; this does not exclude other journals."
+          },
+          {
+            "name": "clinical_guideline",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter to papers classified as clinical guidelines.",
+              "title": "Clinical Guideline"
+            },
+            "description": "Filter to papers classified as clinical guidelines."
+          },
+          {
+            "name": "medical_mode",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter to top medical journals and guidelines, about 8M documents",
+              "title": "Medical Mode"
+            },
+            "description": "Filter to top medical journals and guidelines, about 8M documents"
+          },
+          {
+            "name": "include_semantic_score",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Return the semantic score for each result when true. The score is only returned for the top 50 results.",
+              "title": "Include Semantic Score"
+            },
+            "description": "Return the semantic score for each result when true. The score is only returned for the top 50 results."
+          },
+          {
+            "name": "include_full_text_chunks",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Return query-relevant full-text excerpts. Enterprise customers only.",
+              "default": false,
+              "title": "Include Full Text Chunks"
+            },
+            "description": "Return query-relevant full-text excerpts. Enterprise customers only."
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "maximum": 49,
+                  "minimum": 0
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Page number of results to return (0-indexed, max 50 pages).",
+              "title": "Page"
+            },
+            "description": "Page number of results to return (0-indexed, max 50 pages)."
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Number of papers to return per page. Defaults to 20. The maximum depends on your plan; a larger value is capped to your plan's maximum (see the page_size returned in the response).",
+              "title": "Page Size"
+            },
+            "description": "Number of papers to return per page. Defaults to 20. The maximum depends on your plan; a larger value is capped to your plan's maximum (see the page_size returned in the response)."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuickSearchResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "x-sunset": "2027-02-07T00:00:00Z"
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "QueryResult": {
+        "properties": {
+          "abstract": {
+            "type": "string",
+            "title": "Abstract",
+            "description": "Abstract of the paper."
+          },
+          "authors": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Authors",
+            "description": "List of the paper's authors."
+          },
+          "doi": {
+            "type": "string",
+            "title": "Doi",
+            "description": "Digital Object Identifier for the document."
+          },
+          "journal_name": {
+            "type": "string",
+            "title": "Journal Name",
+            "description": "Publication journal of the paper."
+          },
+          "pages": {
+            "type": "string",
+            "title": "Pages",
+            "description": "Page range of the paper."
+          },
+          "publish_year": {
+            "type": "integer",
+            "title": "Publish Year",
+            "description": "Publication year of the paper."
+          },
+          "title": {
+            "type": "string",
+            "title": "Title",
+            "description": "Title of the paper."
+          },
+          "url": {
+            "type": "string",
+            "title": "Url",
+            "description": "Consensus URL for more paper details."
+          },
+          "volume": {
+            "type": "string",
+            "title": "Volume",
+            "description": "Journal volume of the paper."
+          },
+          "semantic_score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Semantic Score",
+            "description": "Semantic relevance score for the paper. Only returned when include_semantic_score is true. The score is only returned for the top 50 results; it is omitted for all later results."
+          },
+          "citation_count": {
+            "type": "integer",
+            "title": "Citation Count",
+            "description": "Number of citations for the paper."
+          },
+          "study_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Study Type",
+            "description": "Study type of the paper."
+          },
+          "takeaway": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Takeaway",
+            "description": "Key takeaway or summary from the paper abstract."
+          },
+          "publisher_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Publisher Name",
+            "description": "Publisher display name."
+          },
+          "full_text_chunks": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Full Text Chunks",
+            "description": "Query-relevant paper excerpts, returned only when requested."
+          },
+          "sjr_best_quartile": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sjr Best Quartile",
+            "description": "SCImago Journal Rank best quartile for the journal (1 = top, 4 = bottom)."
+          },
+          "sample_size": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sample Size",
+            "description": "Number of participants or subjects in the study, when known."
+          },
+          "study_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Study Count",
+            "description": "Number of studies synthesized (e.g. for a meta-analysis), when known."
+          },
+          "population_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Population Type",
+            "description": "Study population type: 'human', 'animal', or 'other'."
+          },
+          "is_preprint": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Preprint",
+            "description": "True when the paper is a preprint (not yet peer-reviewed)."
+          },
+          "countries_of_study": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Countries Of Study",
+            "description": "Countries where the study was conducted, when known."
+          },
+          "study_duration_days": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Study Duration Days",
+            "description": "Study duration in days, when known."
+          },
+          "influential_citation_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Influential Citation Count",
+            "description": "Number of influential citations (from Semantic Scholar)."
+          },
+          "institutions": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Institutions",
+            "description": "Author institutional affiliations, when known."
+          },
+          "publish_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Publish Date",
+            "description": "Full publication date (YYYY-MM-DD), when known."
+          }
+        },
+        "type": "object",
+        "required": [
+          "abstract",
+          "authors",
+          "doi",
+          "journal_name",
+          "pages",
+          "publish_year",
+          "title",
+          "url",
+          "volume",
+          "citation_count"
+        ],
+        "title": "QueryResult"
+      },
+      "QuickSearchResponse": {
+        "properties": {
+          "results": {
+            "items": {
+              "$ref": "#/components/schemas/QueryResult"
+            },
+            "type": "array",
+            "title": "Results",
+            "description": "List of query results."
+          },
+          "page": {
+            "type": "integer",
+            "title": "Page",
+            "description": "Current zero-indexed result page."
+          },
+          "page_size": {
+            "type": "integer",
+            "title": "Page Size",
+            "description": "Number of results per page actually applied to this response.",
+            "default": 20
+          },
+          "is_end": {
+            "type": "boolean",
+            "title": "Is End",
+            "description": "True when no further page is indicated by the search backend."
+          },
+          "next_page": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Page",
+            "description": "Next zero-indexed page to request, if one is available."
+          }
+        },
+        "type": "object",
+        "required": [
+          "results",
+          "page",
+          "is_end"
+        ],
+        "title": "QuickSearchResponse"
+      },
+      "StudyTypeKeywordEnum": {
+        "type": "string",
+        "enum": [
+          "bench experiment",
+          "case report",
+          "case study",
+          "case-control study",
+          "cohort study",
+          "commentary or perspective",
+          "cross-sectional study",
+          "field study",
+          "historical or archival analysis",
+          "interview study",
+          "literature review",
+          "longitudinal / panel data study",
+          "meta-analysis",
+          "mixed methods study",
+          "non-randomized experimental study",
+          "non-rct in vitro",
+          "other",
+          "rct",
+          "systematic review",
+          "theoretical, modeling, or simulation study",
+          "non-rct experimental",
+          "non-rct observational study",
+          "animal"
+        ],
+        "title": "StudyTypeKeywordEnum",
+        "description": "All possible study types strings saved to search index documents."
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    },
+    "securitySchemes": {
+      "XApiKeyHeader": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-api-key"
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api.consensus.app"
+    }
+  ],
+  "x-readme": {
+    "explorer-enabled": true,
+    "proxy-enabled": true
+  }
+}
