@@ -1,0 +1,131 @@
+---
+title: "Paper discovery"
+description: "Surface the most relevant papers on a topic from a free-text query, then widen or narrow the results with filters."
+---
+
+You want the most relevant papers on a topic, ranked, without hand-tuning a database query language.
+
+## How Consensus helps
+
+Send natural language and Consensus returns ranked results with AI summaries. Ranking is hybrid (vector plus lexical) and weighted by relevance, study quality, and recency, so the strongest, most on-topic papers surface first. From there you add [filters](/api-reference/filters) to widen or narrow the set.
+
+## Recipe
+
+<Steps>
+  <Step title="Start with a free-text query">
+    Describe the topic in plain language. No operators or field syntax required.
+  </Step>
+  <Step title="Inspect the ranked results">
+    Scan titles, `publish_year`, and the `takeaway` summary to judge fit.
+  </Step>
+  <Step title="Widen or narrow with filters">
+    Add `year_min`, a design filter via `study_types`, or `open_access` to shape the set to what you need.
+  </Step>
+</Steps>
+
+### The basic call
+
+<CodeGroup>
+
+```bash curl
+curl -G https://api.consensus.app/v1/search \
+  -H "x-api-key: $CONSENSUS_API_KEY" \
+  --data-urlencode "query=microplastics and human health" \
+  --data-urlencode "page_size=10"
+```
+
+```python Python
+import os, requests
+
+resp = requests.get(
+    "https://api.consensus.app/v1/search",
+    headers={"x-api-key": os.environ["CONSENSUS_API_KEY"]},
+    params={"query": "microplastics and human health", "page_size": 10},
+)
+resp.raise_for_status()
+for paper in resp.json()["results"]:
+    print(paper["title"], "|", paper.get("publish_year"))
+```
+
+```javascript JavaScript
+const params = new URLSearchParams({
+  query: "microplastics and human health",
+  page_size: "10",
+});
+const res = await fetch(`https://api.consensus.app/v1/search?${params}`, {
+  headers: { "x-api-key": process.env.CONSENSUS_API_KEY },
+});
+const { results } = await res.json();
+for (const paper of results) console.log(paper.title, "|", paper.publish_year);
+```
+
+</CodeGroup>
+
+### Widen and narrow
+
+Wrap the call in a helper and change only the filters. Start broad to gauge the landscape, then tighten until the set matches your need.
+
+```python
+import os, requests
+
+def discover(query, **filters):
+    resp = requests.get(
+        "https://api.consensus.app/v1/search",
+        headers={"x-api-key": os.environ["CONSENSUS_API_KEY"]},
+        params={"query": query, "page_size": 10, **filters},
+    )
+    resp.raise_for_status()
+    return resp.json()["results"]
+
+query = "microplastics and human health"
+
+# Broad: the whole landscape
+broad = discover(query)
+
+# Narrow: recent, open-access reviews you can read in full today
+narrow = discover(
+    query,
+    year_min=2022,
+    open_access=True,
+    study_types="systematic review,meta-analysis",
+)
+
+print(f"broad: {len(broad)} results, narrowed: {len(narrow)} results")
+for paper in narrow:
+    print(paper["title"], "|", paper["url"])
+```
+
+<Tip>
+  Discovery works well from an LLM host. Connect the [Consensus MCP server](/mcp/overview) to Claude, ChatGPT, or Cursor and ask it to find papers on a topic. It calls the `search` tool and returns ranked, summarized results. See [Connect an MCP client](/mcp/connect).
+</Tip>
+
+## Filters for discovery
+
+- `year_min` and `year_max`: bound the publication window to widen or narrow by recency.
+- `study_types`: focus on a design, for example `rct` for trials or `systematic review` for overviews.
+- `open_access`: keep only papers you can read in full immediately.
+- `domain`: scope to a field with comma-separated codes such as `med`, `bio`, `cs`, `psych`.
+- `medical_mode`: restrict to top medical journals and clinical guidelines.
+
+Every parameter is documented in [Filters](/api-reference/filters).
+
+## Tips
+
+- Start broad. Over-filtering an unfamiliar topic hides papers you did not know to look for. Add constraints once you can see the landscape.
+- Set `include_semantic_score=true` to return a relevance score on the top results, which is useful for thresholding or ranking in your own UI.
+- `page_size` defaults to 20 and is capped by your plan. To go past the first page, follow `next_page` as shown in [Pagination](/api-reference/pagination).
+
+<Note>
+  `takeaway` and `study_type` require a Pro plan or higher. On Free and Anonymous tiers you still get title, authors, abstract, journal, year, citation count, and url. See [pricing](https://consensus.app/pricing).
+</Note>
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="Literature review automation" icon="list-check" href="/use-cases/literature-review">
+    Scale a tuned query into a deduplicated, exportable corpus.
+  </Card>
+  <Card title="Filters" icon="filter" href="/api-reference/filters">
+    The full filter reference, with types and accepted values.
+  </Card>
+</CardGroup>

@@ -1,0 +1,226 @@
+---
+title: "Filtering results"
+description: "Narrow Consensus search results by time, study design, journal quality, sample size, source, and more."
+---
+
+Filters are optional query parameters you add to a search request alongside the required `query`. They work on both [`GET /v1/search`](/api-reference/endpoints/search) and the legacy [`GET /v1/quick_search`](/api-reference/endpoints/quick-search).
+
+Each filter narrows the result set further, with one exception: `journal_name` boosts matching journals rather than excluding others. Add as many as you need.
+
+<Tip>
+  With curl, pass each parameter with `--data-urlencode` so values with spaces or symbols are encoded correctly.
+</Tip>
+
+## Time
+
+<ParamField query="year_min" type="integer">
+  Exclude papers published before this year. Inclusive.
+</ParamField>
+
+<ParamField query="year_max" type="integer">
+  Exclude papers published after this year. Inclusive.
+</ParamField>
+
+<ParamField query="month_min" type="integer">
+  Earliest month within `year_min`, from 1 to 12. Requires `year_min`.
+</ParamField>
+
+<ParamField query="month_max" type="integer">
+  Latest month within `year_max`, from 1 to 12. Requires `year_max`.
+</ParamField>
+
+## Study design
+
+<ParamField query="study_types" type="array">
+  Restrict results to one or more study types. Pass the accepted values comma-separated, for example `rct,meta-analysis`.
+</ParamField>
+
+<Accordion title="All study_types values">
+  - `bench experiment`
+  - `case report`
+  - `case study`
+  - `case-control study`
+  - `cohort study`
+  - `commentary or perspective`
+  - `cross-sectional study`
+  - `field study`
+  - `historical or archival analysis`
+  - `interview study`
+  - `literature review`
+  - `longitudinal / panel data study`
+  - `meta-analysis`
+  - `mixed methods study`
+  - `non-randomized experimental study`
+  - `non-rct in vitro`
+  - `other`
+  - `rct`
+  - `systematic review`
+  - `theoretical, modeling, or simulation study`
+  - `non-rct experimental`
+  - `non-rct observational study`
+  - `animal`
+</Accordion>
+
+<ParamField query="human" type="boolean">
+  Only include studies conducted in humans.
+</ParamField>
+
+<ParamField query="controlled" type="boolean">
+  Only include controlled studies.
+</ParamField>
+
+<ParamField query="clinical_guideline" type="boolean">
+  Only include papers classified as clinical guidelines.
+</ParamField>
+
+<ParamField query="medical_mode" type="boolean">
+  Restrict results to top medical journals and guidelines (about 8 million documents).
+</ParamField>
+
+## Journal quality
+
+Journal quartiles use SCImago Journal Rank (SJR), where `1` is the best quartile (Q1) and `4` is the lowest (Q4).
+
+<ParamField query="sjr_min" type="integer">
+  Lowest-numbered quartile to allow, from 1 to 4. This drops journals in better quartiles. For example, `sjr_min=2` excludes Q1 journals.
+</ParamField>
+
+<ParamField query="sjr_max" type="integer">
+  Highest-numbered quartile to allow, from 1 to 4. This drops journals in lower quartiles. For example, `sjr_max=1` keeps only Q1 journals.
+</ParamField>
+
+<ParamField query="citation_min" type="integer">
+  Exclude papers with fewer than this many citations.
+</ParamField>
+
+<ParamField query="exclude_preprints" type="boolean">
+  Exclude preprints, keeping only peer-reviewed papers.
+</ParamField>
+
+<ParamField query="open_access" type="boolean">
+  Only include open-access papers.
+</ParamField>
+
+<Note>
+  To keep only the strongest journals, set `sjr_max=1` (Q1 only) or `sjr_max=2` (Q1 and Q2).
+</Note>
+
+## Sample size and duration
+
+<ParamField query="sample_size_min" type="integer">
+  Exclude studies with a sample size smaller than this. Must be 1 or greater.
+</ParamField>
+
+<ParamField query="duration_min" type="integer">
+  Minimum study duration, in days.
+</ParamField>
+
+<ParamField query="duration_max" type="integer">
+  Maximum study duration, in days.
+</ParamField>
+
+## Source
+
+<ParamField query="publisher_name" type="string">
+  Comma-separated publisher display names. Filters results to matching publishers.
+</ParamField>
+
+<ParamField query="journal_name" type="string">
+  A preferred journal name, for example `Nature`. Results from matching journals are surfaced higher. This does not exclude other journals.
+</ParamField>
+
+<ParamField query="domain" type="string">
+  Comma-separated academic field codes (not web or email domains). Filters results to those fields.
+</ParamField>
+
+The accepted `domain` codes:
+
+| Code | Field |
+| ---- | ----- |
+| `med` | Medicine |
+| `bio` | Biology |
+| `cs` | Computer science |
+| `chem` | Chemistry |
+| `psych` | Psychology |
+| `phys` | Physics |
+| `mat` | Materials science |
+| `eng` | Engineering |
+| `env` | Environmental science |
+| `bus` | Business |
+| `econ` | Economics |
+| `math` | Mathematics |
+| `poli` | Political science |
+| `agri` | Agricultural and food sciences |
+| `edu` | Education |
+| `soc` | Sociology |
+| `geol` | Geology |
+| `geog` | Geography |
+| `hist` | History |
+| `art` | Art |
+| `philo` | Philosophy |
+| `law` | Law |
+| `ling` | Linguistics |
+
+<ParamField query="country" type="string">
+  Comma-separated ISO 3166-1 alpha-2 country codes, for example `us,gb`, to filter to those countries of study. Unknown codes are ignored, and if none resolve, the filter is not applied.
+</ParamField>
+
+## Response fields
+
+These toggles change which fields come back on each result rather than which papers match.
+
+<ParamField query="include_semantic_score" type="boolean">
+  Return the `semantic_score` relevance score on each result. The score is only returned for the top 50 results and is omitted for all later results.
+</ParamField>
+
+<ParamField query="include_full_text_chunks" type="boolean" default="false">
+  Return query-relevant full-text excerpts in the `full_text_chunks` field. Available to Enterprise customers only. See [Full text and fields](/enterprise/full-text-and-fields).
+</ParamField>
+
+## Examples
+
+Recent, high-quality clinical evidence in humans:
+
+```bash
+curl -G https://api.consensus.app/v1/search \
+  -H "x-api-key: $CONSENSUS_API_KEY" \
+  --data-urlencode "query=does intermittent fasting improve insulin sensitivity" \
+  --data-urlencode "study_types=rct,meta-analysis" \
+  --data-urlencode "human=true" \
+  --data-urlencode "year_min=2018" \
+  --data-urlencode "sjr_max=1"
+```
+
+Open-access, peer-reviewed, well-cited, adequately powered studies:
+
+```bash
+curl -G https://api.consensus.app/v1/search \
+  -H "x-api-key: $CONSENSUS_API_KEY" \
+  --data-urlencode "query=microplastics effects on marine life" \
+  --data-urlencode "open_access=true" \
+  --data-urlencode "exclude_preprints=true" \
+  --data-urlencode "citation_min=25" \
+  --data-urlencode "sample_size_min=100"
+```
+
+Filter by field and country, with a preferred journal:
+
+```bash
+curl -G https://api.consensus.app/v1/search \
+  -H "x-api-key: $CONSENSUS_API_KEY" \
+  --data-urlencode "query=direct air carbon capture" \
+  --data-urlencode "domain=env,eng" \
+  --data-urlencode "country=us,gb" \
+  --data-urlencode "journal_name=Nature"
+```
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="Pagination" icon="layer-group" href="/api-reference/pagination">
+    Combine filters with `page` and `page_size` to walk a result set.
+  </Card>
+  <Card title="Search endpoint" icon="magnifying-glass" href="/api-reference/endpoints/search">
+    The full parameter and response reference.
+  </Card>
+</CardGroup>

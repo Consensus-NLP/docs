@@ -1,0 +1,94 @@
+---
+title: "Errors"
+description: "Understand Consensus API status codes, the validation error shape, and how to handle rate limiting."
+---
+
+The API uses standard HTTP status codes. A `2xx` code means success, a `4xx` code means the request needs changing before you retry, and a `5xx` code means a server-side problem you can retry.
+
+## Status codes
+
+| Status | Meaning |
+| ------ | ------- |
+| `200` | Success. The response body contains your results. |
+| `400` | Bad request. The request was malformed. |
+| `401` | Unauthorized. Your `x-api-key` header is missing or invalid. |
+| `403` | Forbidden. The key is valid but not permitted to access the requested resource or field. |
+| `404` | Not found. The route or resource does not exist. |
+| `422` | Unprocessable entity. A query parameter failed validation. |
+| `429` | Too many requests. You are rate limited. |
+| `500` | Internal server error. Something went wrong on our side. |
+
+## Validation errors (422)
+
+When a parameter fails validation, the API returns `422` with a `detail` array. Each entry pinpoints the field that failed and why.
+
+<ResponseField name="detail" type="object[]">
+  One entry per validation problem. Each entry has:
+
+  - `loc` (array): path to the field that failed, for example `["query", "page_size"]`.
+  - `msg` (string): human-readable description of the problem.
+  - `type` (string): machine-readable error type.
+</ResponseField>
+
+For example, sending `page_size=0` (the minimum is 1) returns:
+
+```json
+{
+  "detail": [
+    {
+      "loc": ["query", "page_size"],
+      "msg": "Input should be greater than or equal to 1",
+      "type": "greater_than_equal"
+    }
+  ]
+}
+```
+
+Read the `loc` to find the offending parameter and correct it. See [Filtering results](/api-reference/filters) and [Pagination](/api-reference/pagination) for the accepted ranges.
+
+## Authentication errors (401)
+
+A `401` means your `x-api-key` header is missing or invalid. Check that:
+
+- You sent the key in the `x-api-key` header, not `Authorization`.
+- The key is active and copied in full, with no extra whitespace.
+
+See [Authentication](/authentication) for details.
+
+## Rate limiting (429)
+
+When you exceed your plan's rate, the API returns `429` with a `Retry-After` header giving the number of seconds to wait. Honor it, then retry. Build backoff into any client that pages or batches requests.
+
+```python
+import os
+import time
+import requests
+
+def search_with_retry(params, max_retries=5):
+    url = "https://api.consensus.app/v1/search"
+    headers = {"x-api-key": os.environ["CONSENSUS_API_KEY"]}
+    for attempt in range(max_retries):
+        resp = requests.get(url, headers=headers, params=params)
+        if resp.status_code != 429:
+            resp.raise_for_status()
+            return resp.json()
+        wait = int(resp.headers.get("Retry-After", 2 ** attempt))
+        time.sleep(wait)
+    raise RuntimeError("Still rate limited after retries")
+
+data = search_with_retry({"query": "does creatine improve muscle strength"})
+```
+
+See [Rate limits and tiers](/rate-limits-and-tiers) for what each plan allows.
+
+## Server errors (5xx)
+
+A `500` is a problem on our side, not with your request. Retry after a short delay with exponential backoff. If it persists, contact [support@consensus.app](mailto:support@consensus.app).
+
+## Handling errors well
+
+- Check the status code before parsing the body.
+- On `422`, read `detail` to find the field to fix.
+- On `429`, wait for `Retry-After` before retrying.
+- On `5xx`, retry with exponential backoff.
+- Never log or expose your API key.

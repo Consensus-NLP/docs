@@ -1,0 +1,79 @@
+---
+title: "Pagination"
+description: "Page through Consensus search results with page, page_size, is_end, and next_page."
+---
+
+Search results are paginated. You control paging with two request parameters, `page` and `page_size`, and read four fields from every response to know where you are and whether more results remain.
+
+## Request parameters
+
+<ParamField query="page" type="integer">
+  Zero-indexed page number. The first page is `0`. You can request up to 50 pages, so valid values run from 0 to 49.
+</ParamField>
+
+<ParamField query="page_size" type="integer">
+  Number of results per page. Defaults to 20. Your plan sets the maximum, and a larger value is capped to that maximum. See [Rate limits and tiers](/rate-limits-and-tiers), and always read the `page_size` returned in the response for the value actually applied.
+</ParamField>
+
+## Response fields
+
+<ResponseField name="page" type="integer">
+  The zero-indexed page this response represents.
+</ResponseField>
+
+<ResponseField name="page_size" type="integer">
+  Results per page applied to this response. This can be lower than you requested if your plan caps it.
+</ResponseField>
+
+<ResponseField name="is_end" type="boolean">
+  `true` when no further page is available.
+</ResponseField>
+
+<ResponseField name="next_page" type="integer | null">
+  The next page to request, or `null` when `is_end` is `true`.
+</ResponseField>
+
+A response envelope looks like this:
+
+```json
+{
+  "results": [],
+  "page": 0,
+  "page_size": 20,
+  "is_end": false,
+  "next_page": 1
+}
+```
+
+## Page through every result
+
+Start at page `0` and follow `next_page` until `is_end` is `true`. This loop collects every available result for a query:
+
+```python
+import os
+import requests
+
+def search_all(query, page_size=20, max_pages=50):
+    results = []
+    page = 0
+    while page < max_pages:
+        resp = requests.get(
+            "https://api.consensus.app/v1/search",
+            headers={"x-api-key": os.environ["CONSENSUS_API_KEY"]},
+            params={"query": query, "page": page, "page_size": page_size},
+        )
+        resp.raise_for_status()
+        data = resp.json()
+        results.extend(data["results"])
+        if data["is_end"] or data["next_page"] is None:
+            break
+        page = data["next_page"]
+    return results
+
+papers = search_all("does creatine improve muscle strength")
+print(len(papers), "papers")
+```
+
+<Note>
+  The API returns at most 50 pages (page 0 through 49), so the deepest result you can reach is `page_size` times 50. To go beyond that, narrow the search with [filters](/api-reference/filters) rather than paging further.
+</Note>

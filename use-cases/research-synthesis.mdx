@@ -1,0 +1,95 @@
+---
+title: "Research synthesis"
+description: "Turn a research question into a cited, defensible answer by searching peer-reviewed papers and composing their takeaways with grounded citations."
+---
+
+You need a defensible answer to a research question, backed by citations, not a page of blue links.
+
+## How Consensus helps
+
+Consensus searches over 200 million peer-reviewed papers and returns ranked results with an AI `takeaway` (a one-sentence summary of each paper's finding) alongside the [metadata](/api-reference/endpoints/search) you cite: `doi`, `journal_name`, `publish_year`, and `citation_count`. A single call gives you the evidence, the summary, and the reference, so you can assemble a grounded synthesis without leaving the API.
+
+## Recipe
+
+<Steps>
+  <Step title="Refine the question">
+    Make it specific and answerable. "Does omega-3 supplementation reduce depression symptoms" beats "omega-3 and mood". A focused query returns tighter, more comparable evidence.
+  </Step>
+  <Step title="Search with quality filters">
+    Restrict to synthesis-grade designs with `study_types=meta-analysis,systematic review`, and set a `year_min` to favor recent evidence.
+  </Step>
+  <Step title="Pull takeaways and metadata">
+    Read `takeaway` for each result, and keep `doi`, `journal_name`, `publish_year`, and `citation_count` for the citation.
+  </Step>
+  <Step title="Compose a cited answer">
+    Format each finding with its reference. Hand the collected takeaways to your own LLM if you want a single synthesized paragraph.
+  </Step>
+</Steps>
+
+```python
+import os, requests
+
+resp = requests.get(
+    "https://api.consensus.app/v1/search",
+    headers={"x-api-key": os.environ["CONSENSUS_API_KEY"]},
+    params={
+        "query": "does omega-3 supplementation reduce depression symptoms",
+        "study_types": "meta-analysis,systematic review",
+        "year_min": 2015,
+        "page_size": 8,
+    },
+)
+resp.raise_for_status()
+papers = resp.json()["results"]
+
+references = []
+for i, paper in enumerate(papers, start=1):
+    finding = paper.get("takeaway") or paper["title"]
+    link = f"https://doi.org/{paper['doi']}" if paper.get("doi") else paper["url"]
+    venue = f"{paper.get('journal_name', 'n/a')}, {paper.get('publish_year', 'n/a')}"
+    cites = paper.get("citation_count", 0)
+    references.append(f"[{i}] {finding}\n    {venue}. Cited by {cites}. {link}")
+
+print("Evidence for: does omega-3 supplementation reduce depression symptoms\n")
+print("\n\n".join(references))
+```
+
+Each numbered line is a self-contained, citable finding. Pass the `references` list to your own model with a prompt like "synthesize these findings into one paragraph, preserving the citation numbers" to produce a written answer that stays grounded in the sources.
+
+<Tip>
+  The same workflow runs from an LLM host. Connect the [Consensus MCP server](/mcp/overview) to Claude, ChatGPT, or Cursor and ask it to research your question. It calls the `search` tool and returns the same grounded results. See [Connect an MCP client](/mcp/connect).
+</Tip>
+
+## Filters that sharpen synthesis
+
+- `study_types`: use `meta-analysis` and `systematic review` for the strongest evidence, or add `rct` to include primary trials.
+- `year_min`: favor recent evidence, for example the last ten years.
+- `sjr_max`: cap the journal quartile (`1` is Q1) to prioritize higher-ranked venues.
+- `sample_size_min`: drop underpowered studies.
+
+See the full set in [Filters](/api-reference/filters).
+
+## Tips
+
+- For a yes/no question, the web app's Consensus Meter aggregates the evidence into a single snapshot. Read more under [Fact-checking](/use-cases/fact-checking).
+- Results are peer-reviewed by default. Add `exclude_preprints=true` to enforce peer-reviewed only, and reach for preprints only when you want the newest, unvetted work.
+- Sort your synthesis by `citation_count` or `influential_citation_count` to lead with the most established findings.
+
+<Note>
+  Fields vary by plan. `takeaway` and `study_type` need Pro or higher; `doi` and `full_text_chunks` need Enterprise. The recipe uses `.get()` and falls back to the paper `url`, so it degrades gracefully on any tier. See [pricing](https://consensus.app/pricing).
+</Note>
+
+<Warning>
+  AI takeaways are LLM-generated summaries. Verify the underlying paper before relying on a finding for high-stakes work.
+</Warning>
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="Cross-study comparison" icon="chart-column" href="/use-cases/cross-study-comparison">
+    Break a synthesis down by design, population, and geography.
+  </Card>
+  <Card title="Fact-checking" icon="scale-balanced" href="/use-cases/fact-checking">
+    Reduce a synthesis to a single verdict with citations.
+  </Card>
+</CardGroup>

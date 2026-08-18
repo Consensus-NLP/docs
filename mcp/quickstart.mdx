@@ -1,0 +1,56 @@
+---
+title: "MCP quickstart"
+description: "Connect Consensus to Claude Code or ChatGPT and ask your first research question in minutes."
+---
+
+Get connected fast with the two easiest clients. Pick the one you already use, then jump to [Connect a client](/mcp/connect) for everything else.
+
+## Claude Code
+
+<Steps>
+  <Step title="Add the server">
+    Run this in your terminal:
+
+    ```bash
+    claude mcp add --transport http consensus https://mcp.consensus.app/mcp
+    ```
+  </Step>
+  <Step title="Authorize in your browser">
+    The first time Claude Code calls Consensus, OAuth opens in your browser. Sign in and approve access. You can manage the connection any time with the `/mcp` command.
+  </Step>
+  <Step title="Ask a research question">
+    Prompt Claude to use Consensus:
+
+    ```text
+    Use Consensus to find recent meta-analyses on whether creatine improves muscle strength.
+    ```
+  </Step>
+</Steps>
+
+## ChatGPT
+
+<Steps>
+  <Step title="Open Apps">
+    In the ChatGPT sidebar, open **Apps**.
+  </Step>
+  <Step title="Find and connect Consensus">
+    Search for **Consensus** and select **Connect**. Approve access when prompted.
+  </Step>
+  <Step title="Ask a research question">
+    Ask ChatGPT to use Consensus. Results render in an interactive widget, and Deep Research can call it too:
+
+    ```text
+    Use Consensus to research whether intermittent fasting improves blood pressure.
+    ```
+  </Step>
+</Steps>
+
+<Note>
+  Most clients handle OAuth for you, so there are no keys to copy. See [Authentication](/mcp/authentication) for how sign-in works and the Enterprise Bearer option.
+</Note>
+
+## Connect another client
+
+<Card title="Connect a client" icon="plug" href="/mcp/connect">
+  Setup steps for Claude Desktop, Cursor, Codex, VS Code, Windsurf, and any other HTTP MCP client.
+</Card>

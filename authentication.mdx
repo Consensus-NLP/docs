@@ -1,0 +1,89 @@
+---
+title: "Authentication"
+description: "How to authenticate to Consensus across the REST API and the MCP server, from API keys to OAuth to anonymous access."
+---
+
+Consensus authenticates differently depending on the surface you build on. The REST API uses a secret API key. The MCP server uses OAuth, with a Bearer token option for Enterprise. This page covers all three.
+
+## At a glance
+
+| Method | Surface | How you authenticate | Best for |
+|--------|---------|----------------------|----------|
+| **API key** | REST API | `x-api-key` header | Backends, scripts, data pipelines |
+| **OAuth 2.1** | MCP server | Browser sign-in (Authorization Code + PKCE) | LLM hosts and agents |
+| **Bearer token** | MCP server | `Authorization: Bearer` header | Enterprise service-to-service |
+| **Anonymous** | MCP server | None (rate-limited, reduced fields) | Quick trials and public demos |
+
+## REST API keys
+
+The REST API authenticates with a secret API key sent in the `x-api-key` header on every request. It is not a Bearer token.
+
+<Steps>
+  <Step title="Create a key">
+    Generate a key from the [API dashboard](https://consensus.app/subscription/api/).
+  </Step>
+  <Step title="Send it in the x-api-key header">
+    Add the header to every request to `https://api.consensus.app`.
+
+    ```bash
+    curl -G https://api.consensus.app/v1/search \
+      -H "x-api-key: $CONSENSUS_API_KEY" \
+      --data-urlencode "query=intermittent fasting and blood pressure"
+    ```
+  </Step>
+</Steps>
+
+<Warning>
+  Treat your API key like a password. Never commit it to source control, embed it in client-side code, or expose it in a browser. Load it from an environment variable or a secrets manager, and use it only from a server you control.
+</Warning>
+
+### When a request fails auth
+
+A `401 Unauthorized` response means the key is missing, malformed, or invalid. Check that:
+
+- The header is named `x-api-key`, not `Authorization`.
+- The key has no extra whitespace or surrounding quotes.
+- The key has not been rotated or revoked.
+
+See [Errors](/api-reference/errors) for the full list of status codes.
+
+### Rotate a key
+
+Rotate a key any time you suspect it has leaked. Create a new key in the [API dashboard](https://consensus.app/subscription/api/), roll it out to your services, then remove the old one. Because the key travels in a header, rotation is a configuration change with no code change.
+
+<Tip>
+  Ready to make your first authenticated call? Follow the [API quickstart](/api-reference/quickstart).
+</Tip>
+
+## MCP OAuth
+
+The [MCP server](/mcp/overview) uses OAuth 2.1, so you never paste a key into your LLM host. Most clients (Claude, ChatGPT, Cursor, Codex, VS Code, Windsurf) run the whole flow for you:
+
+- **Authorization Code with PKCE**: the standard, secure browser sign-in flow.
+- **Dynamic client registration**: the client registers itself with Consensus automatically, so there is nothing to set up by hand.
+
+When you connect a client, a browser window opens for you to sign in to Consensus and approve access. After that, the client stores and refreshes its own tokens.
+
+<Note>
+  Clients discover the endpoints automatically from the OAuth server metadata at [`https://consensus.app/.well-known/oauth-authorization-server`](https://consensus.app/.well-known/oauth-authorization-server). You do not configure URLs by hand.
+</Note>
+
+For step-by-step client setup, see [MCP authentication](/mcp/authentication) and [Connect a client](/mcp/connect).
+
+### Enterprise Bearer token
+
+Enterprise plans can authenticate the MCP server with a Bearer token instead of the interactive OAuth flow. This suits service-to-service integrations where no human is present to complete a browser sign-in.
+
+```http
+Authorization: Bearer YOUR_API_KEY
+```
+
+Contact [sales](https://consensus.app/home/contact/) to enable Bearer authentication for your team. See [Enterprise](/enterprise/overview) for what else the plan unlocks.
+
+### Anonymous access
+
+The MCP server also works with no authentication, which is handy for a quick trial. Anonymous access is aggressively rate-limited and returns a reduced set of fields, so connect an account before you build on it.
+
+<Warning>
+  Anonymous and free-tier responses omit fields such as `study_type` and `takeaway`. See [Rate limits and tiers](/rate-limits-and-tiers) for exactly what each tier returns.
+</Warning>

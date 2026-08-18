@@ -1,0 +1,158 @@
+---
+title: "Literature review automation"
+description: "Generate search strings, gather results across queries with pagination, deduplicate, screen by filters, and export a clean corpus to BibTeX or CSV."
+---
+
+Assembling a comprehensive, deduplicated corpus across many search strings is slow and error-prone by hand.
+
+## How Consensus helps
+
+One endpoint covers every query, every result carries rich metadata for screening, and [pagination](/api-reference/pagination) lets you reach depth beyond the first page. You script the gather once and get a reproducible corpus you can hand to a reference manager.
+
+## Recipe
+
+<Steps>
+  <Step title="Generate search strings">
+    Write several phrasings of the same information need. Different wordings surface different papers, which widens recall.
+  </Step>
+  <Step title="Retrieve across queries">
+    Run each query and follow `next_page` until `is_end` is true, so you collect more than the default first page. See [Pagination](/api-reference/pagination).
+  </Step>
+  <Step title="Deduplicate">
+    Collapse duplicates across queries by `doi`, falling back to a normalized `title` when a DOI is absent.
+  </Step>
+  <Step title="Screen by filters">
+    Narrow with server-side filters (`study_types`, `year_min`, `sample_size_min`), then apply any extra client-side rules on the returned metadata.
+  </Step>
+  <Step title="Export">
+    Write the screened corpus to CSV for a spreadsheet, or BibTeX for Zotero, Mendeley, or LaTeX.
+  </Step>
+</Steps>
+
+### Gather and deduplicate
+
+```python
+import os, re, time, requests
+
+API = "https://api.consensus.app/v1/search"
+HEADERS = {"x-api-key": os.environ["CONSENSUS_API_KEY"]}
+
+def search(query, max_pages=3, **filters):
+    """Yield every result for a query, following pagination up to max_pages."""
+    page = 0
+    while page < max_pages:
+        params = {"query": query, "page": page, "page_size": 20, **filters}
+        resp = requests.get(API, headers=HEADERS, params=params)
+        if resp.status_code == 429:  # rate limited, honor Retry-After
+            time.sleep(int(resp.headers.get("Retry-After", 5)))
+            continue
+        resp.raise_for_status()
+        data = resp.json()
+        yield from data["results"]
+        if data["is_end"] or data["next_page"] is None:
+            break
+        page = data["next_page"]
+
+def dedup_key(paper):
+    doi = paper.get("doi")
+    if doi:
+        return doi.strip().lower()
+    return re.sub(r"[^a-z0-9]", "", paper["title"].lower())
+
+queries = [
+    "intermittent fasting and weight loss",
+    "time-restricted eating body composition",
+    "alternate day fasting metabolic health",
+]
+
+seen, corpus = set(), []
+for q in queries:
+    for paper in search(q, max_pages=3, study_types="rct,meta-analysis", year_min=2015):
+        key = dedup_key(paper)
+        if key in seen:
+            continue
+        seen.add(key)
+        corpus.append(paper)
+
+print(f"{len(corpus)} unique papers across {len(queries)} queries")
+```
+
+### Screen and export
+
+```python
+import csv
+
+# Client-side screen on returned metadata (Pro plans and higher expose study_type).
+screened = [
+    p for p in corpus
+    if (p.get("sample_size") or 0) >= 100
+    and p.get("study_type") in {"rct", "meta-analysis", "systematic review"}
+]
+
+# CSV for a spreadsheet
+with open("corpus.csv", "w", newline="") as f:
+    writer = csv.writer(f)
+    writer.writerow(["title", "authors", "journal", "year", "doi", "citations"])
+    for p in screened:
+        writer.writerow([
+            p["title"],
+            "; ".join(p.get("authors") or []),
+            p.get("journal_name", ""),
+            p.get("publish_year", ""),
+            p.get("doi", ""),
+            p.get("citation_count", ""),
+        ])
+
+# BibTeX for Zotero, Mendeley, or LaTeX
+def to_bibtex(paper, cite_key):
+    fields = {
+        "title": paper.get("title"),
+        "author": " and ".join(paper.get("authors") or []),
+        "journal": paper.get("journal_name"),
+        "year": paper.get("publish_year"),
+        "doi": paper.get("doi"),
+    }
+    body = ",\n  ".join(f"{k} = {{{v}}}" for k, v in fields.items() if v)
+    return f"@article{{{cite_key},\n  {body}\n}}"
+
+with open("corpus.bib", "w") as f:
+    for i, p in enumerate(screened):
+        f.write(to_bibtex(p, f"consensus{i}") + "\n\n")
+
+print(f"Exported {len(screened)} screened papers to corpus.csv and corpus.bib")
+```
+
+<Tip>
+  This bulk gather is a job for the REST API. For interactive, conversational review, connect the [Consensus MCP server](/mcp/overview) to your LLM host and iterate on search strings in natural language before you commit them to a script.
+</Tip>
+
+## Filters that help you screen
+
+- `study_types`: keep only the designs your review admits, for example `rct`, `meta-analysis`, `systematic review`.
+- `year_min` and `year_max`: bound the publication window.
+- `sample_size_min`: enforce a minimum sample size at the source.
+- `exclude_preprints`: restrict to peer-reviewed papers.
+- `sjr_max`: cap the journal quartile (`1` is Q1).
+
+See every parameter in [Filters](/api-reference/filters).
+
+## Tips
+
+- `page` is 0-indexed and capped at 50 pages (`0` to `49`). Combined with `page_size` (default 20), that sets the ceiling on how deep any single query can go. Broaden with more query strings rather than expecting one query to return everything.
+- Deduplicate by `doi` first because titles vary in punctuation and casing across sources. The normalized-title fallback catches papers that have no DOI yet.
+- Keep the raw JSON for each kept paper. Re-running the screen later is free once the corpus is on disk.
+
+<Note>
+  `study_type` needs a Pro plan or higher, and `doi` needs Enterprise. The recipe uses `.get()` throughout, so it still produces a corpus on any tier, just with fewer screening fields. See [pricing](https://consensus.app/pricing).
+</Note>
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="Paper discovery" icon="compass" href="/use-cases/paper-discovery">
+    Tune a single query before you scale it into a gather.
+  </Card>
+  <Card title="Pagination" icon="layer-group" href="/api-reference/pagination">
+    How `page`, `is_end`, and `next_page` work together.
+  </Card>
+</CardGroup>

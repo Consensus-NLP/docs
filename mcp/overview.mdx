@@ -1,0 +1,73 @@
+---
+title: "MCP server overview"
+description: "Connect any MCP-compatible LLM host or agent to Consensus and search over 200 million papers as a native tool."
+---
+
+The Consensus Model Context Protocol (MCP) server lets any MCP-compatible LLM host or agent search Consensus as a built-in tool. Connect a client once, then ask research questions in natural language and get ranked results with grounded, DOI-linked citations, without writing any integration code.
+
+## Server URL
+
+Point your client at this URL:
+
+```
+https://mcp.consensus.app/mcp
+```
+
+<Warning>
+  The `/mcp` suffix is required. A URL without it (for example `https://mcp.consensus.app`) will not connect. The transport is streamable HTTP.
+</Warning>
+
+## Why use the MCP server
+
+- **Research as a native tool.** Your LLM host calls Consensus search on its own, mid-conversation, the same way it calls any other tool.
+- **No code to write.** Connect a client in a few steps and start asking questions. Most clients handle authentication for you.
+- **Grounded answers.** Every result carries paper metadata and a DOI, so the model can cite real evidence instead of guessing.
+- **Works where you already work.** Claude, ChatGPT, Cursor, and other clients all search the same index of over 200 million peer-reviewed papers.
+
+## When to use MCP vs the REST API
+
+Both surfaces search the same paper index. Choose based on where your work lives.
+
+|  | MCP server | REST API |
+| --- | --- | --- |
+| **Best for** | LLM hosts and agents that call search as a tool | Applications and backends you write yourself |
+| **You work in** | Claude, ChatGPT, Cursor, Codex, and other MCP clients | Your own code, in any language |
+| **Auth** | OAuth 2.1 in the client (Enterprise Bearer optional) | API key in the `x-api-key` header |
+| **Interface** | Natural language and tool calls | JSON over HTTP with query parameters |
+| **Setup** | Connect a client, no code | Get a key, send a request |
+
+<Card title="REST API reference" icon="code" href="/api-reference/overview">
+  Prefer to call search from your own code? Use the JSON REST API with an API key.
+</Card>
+
+## Explore the MCP docs
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="rocket" href="/mcp/quickstart">
+    Connect Claude Code or ChatGPT and run your first research question.
+  </Card>
+  <Card title="Connect a client" icon="plug" href="/mcp/connect">
+    Step-by-step setup for Claude, ChatGPT, Cursor, Codex, VS Code, and Windsurf.
+  </Card>
+  <Card title="Tools" icon="wrench" href="/mcp/tools">
+    The search and fetch tools, their parameters, and response fields.
+  </Card>
+  <Card title="Authentication" icon="key" href="/mcp/authentication">
+    OAuth 2.1 with PKCE, Enterprise Bearer tokens, and anonymous access.
+  </Card>
+</CardGroup>
+
+## Supported clients
+
+Consensus works with any client that speaks streamable HTTP MCP, including:
+
+- Claude Desktop
+- Claude Code
+- ChatGPT
+- Cursor
+- Codex
+- VS Code (GitHub Copilot)
+- Windsurf
+- Any other HTTP MCP client
+
+See [Connect a client](/mcp/connect) for setup steps for each.

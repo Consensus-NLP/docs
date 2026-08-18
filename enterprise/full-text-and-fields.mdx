@@ -1,0 +1,113 @@
+---
+title: "Full text and advanced fields"
+description: "Request query-relevant full-text excerpts with include_full_text_chunks, get DOIs, and see which response fields each tier returns."
+---
+
+By default, search results include paper abstracts and metadata. Enterprise adds two things on top: query-relevant excerpts from each paper's full text, and DOIs plus advanced field access.
+
+## Full-text excerpts
+
+Set `include_full_text_chunks=true` to include short, query-relevant excerpts from each paper's full text alongside the usual fields. This parameter is Enterprise only and is off by default.
+
+<ParamField query="include_full_text_chunks" type="boolean" default="false">
+  Enterprise only. When `true`, each result includes query-relevant excerpts from the paper's full text in the `full_text_chunks` field. Defaults to `false`.
+</ParamField>
+
+<CodeGroup>
+
+```bash curl
+curl -G https://api.consensus.app/v1/search \
+  -H "x-api-key: $CONSENSUS_API_KEY" \
+  --data-urlencode "query=gut microbiome and depression" \
+  --data-urlencode "include_full_text_chunks=true" \
+  --data-urlencode "page_size=5"
+```
+
+```python Python
+import os, requests
+
+resp = requests.get(
+    "https://api.consensus.app/v1/search",
+    headers={"x-api-key": os.environ["CONSENSUS_API_KEY"]},
+    params={
+        "query": "gut microbiome and depression",
+        "include_full_text_chunks": True,
+        "page_size": 5,
+    },
+)
+resp.raise_for_status()
+for paper in resp.json()["results"]:
+    print(paper["title"], paper.get("full_text_chunks"))
+```
+
+```javascript JavaScript
+const params = new URLSearchParams({
+  query: "gut microbiome and depression",
+  include_full_text_chunks: "true",
+  page_size: "5",
+});
+
+const res = await fetch(`https://api.consensus.app/v1/search?${params}`, {
+  headers: { "x-api-key": process.env.CONSENSUS_API_KEY },
+});
+const { results } = await res.json();
+console.log(results.map((p) => p.full_text_chunks));
+```
+
+</CodeGroup>
+
+Each result then carries a `full_text_chunks` array (values below are illustrative):
+
+```json
+{
+  "title": "Association between gut microbiome composition and depressive symptoms",
+  "doi": "10.1000/example",
+  "journal_name": "Journal of Example Research",
+  "full_text_chunks": [
+    "...participants with higher microbial diversity reported fewer depressive symptoms...",
+    "...the microbiota-gut-brain axis is discussed as a candidate mechanism..."
+  ]
+}
+```
+
+<ResponseField name="full_text_chunks" type="string[] | null">
+  Query-relevant excerpts from the paper's full text. Populated only on Enterprise when you pass `include_full_text_chunks=true`. `null` otherwise.
+</ResponseField>
+
+## DOI and advanced fields
+
+Enterprise responses include the `doi` for every paper, so you can link out, deduplicate, and cross-reference against your own systems. Enterprise also unlocks advanced access to paper metadata beyond the standard fields.
+
+To narrow which papers come back before you read these fields, use the same [filters](/api-reference/filters) available across the API: study type, year, journal, open access, sample size, SJR quartile, domain, and more.
+
+## Field availability by tier
+
+Every tier returns a base set of fields. Higher tiers add AI summaries, and Enterprise adds full text, DOI, and advanced access.
+
+| Field | Free | Pro / Deep / Teams | Enterprise |
+|-------|:----:|:------------------:|:----------:|
+| `title`, `authors`, `abstract`, `journal_name`, `publish_year`, `citation_count`, `url` | ✓ | ✓ | ✓ |
+| `study_type` | | ✓ | ✓ |
+| `takeaway` (AI summary) | | ✓ | ✓ |
+| `doi` | | | ✓ |
+| `full_text_chunks` | | | ✓ |
+| Advanced field access | | | ✓ |
+
+<Note>
+  Anonymous requests (no account) return fewer papers per search and a reduced set of fields. `semantic_score` is separate from tier: it is included on any tier only when you pass `include_semantic_score=true`, and only for the top 50 results. See [Rate limits and tiers](/rate-limits-and-tiers) for papers-per-search caps and [pricing](https://consensus.app/pricing) for quotas.
+</Note>
+
+<Tip>
+  `takeaway` is an AI-generated summary. Treat it as a starting point and verify against the paper for high-stakes use.
+</Tip>
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="Filters" icon="filter" href="/api-reference/filters">
+    Narrow searches by study type, year, journal, open access, and more.
+  </Card>
+  <Card title="Rate limits and tiers" icon="gauge-high" href="/rate-limits-and-tiers">
+    Papers per search and plan features by tier.
+  </Card>
+</CardGroup>
