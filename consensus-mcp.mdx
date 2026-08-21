@@ -1,0 +1,351 @@
+---
+title: "Get started"
+description: "The Consensus MCP server enables AI assistants like ChatGPT, Claude, and other MCP-compatible clients to search over 220 million peer-reviewed academic research papers directly from the conversation."
+---
+
+Consensus MCP lets AI assistants search 220+ million peer-reviewed research papers. Connect your preferred client below. You'll be searching in under 2 minutes.
+
+**Server URL**
+
+```
+https://mcp.consensus.app/mcp
+```
+
+<CardGroup cols={2}>
+  <Card title="Claude" img="/images/claude-card.png" href="https://claude.ai/directory/65247229-f0c7-49df-9044-fcbb8b3894c6">
+    Add Consensus from the Claude connectors directory.
+  </Card>
+  <Card title="ChatGPT" img="/images/chatgpt-card.png" href="https://chatgpt.com/plugins/plugin_asdk_app_6943e6f4a928819195962de16fb9ffe4">
+    Add Consensus from the ChatGPT app directory.
+  </Card>
+</CardGroup>
+
+## Connect Your Client
+
+<AccordionGroup>
+  <Accordion title="Claude Desktop" icon="/logo/clients/claude.svg">
+    **One-click:** open [Consensus in the Claude directory](https://claude.ai/directory/65247229-f0c7-49df-9044-fcbb8b3894c6) and click **Connect**. Or connect manually:
+
+    <Steps>
+      <Step title="Open Settings">
+        Open [claude.ai](https://claude.ai) or the Claude desktop app and go to **Settings**.
+      </Step>
+      <Step title="Browse connectors">
+        Select **Connectors**, then **Browse connectors**.
+      </Step>
+      <Step title="Find Consensus">
+        Search for **Consensus** and click **Connect**.
+      </Step>
+      <Step title="Sign in">
+        Approve the sign-in with your Consensus account, or continue without one at reduced limits.
+      </Step>
+      <Step title="Start searching">
+        Ask a research question in any chat. Consensus appears in the tools menu.
+      </Step>
+    </Steps>
+  </Accordion>
+
+  <Accordion title="Claude Code" icon="/logo/clients/claude.svg">
+    ```bash
+    claude mcp add --transport http consensus https://mcp.consensus.app/mcp
+    ```
+
+    OAuth will open in your browser automatically on first use. You can also trigger it manually with the `/mcp` command inside Claude Code.
+  </Accordion>
+
+  <Accordion title="ChatGPT" icon="/logo/clients/openai.svg">
+    **One-click:** open [Consensus in the ChatGPT app directory](https://chatgpt.com/plugins/plugin_asdk_app_6943e6f4a928819195962de16fb9ffe4) and click **Connect**. Or connect manually:
+
+    <Steps>
+      <Step title="Open ChatGPT">
+        Open [chatgpt.com](https://chatgpt.com) and sign in.
+      </Step>
+      <Step title="Find Consensus">
+        Open **Apps** from the sidebar, search for **Consensus**, and click **Connect**.
+      </Step>
+      <Step title="Sign in">
+        Sign in with your Consensus account when prompted.
+      </Step>
+      <Step title="Start searching">
+        Ask a research question, or call it by name: "Use Consensus to find RCTs on…"
+      </Step>
+    </Steps>
+
+    Search results display in an interactive widget showing top papers with citations and direct links.
+
+    <Note>
+      Consensus also works with ChatGPT Deep Research. See [Using Consensus with ChatGPT Deep Research](#using-consensus-with-chatgpt-deep-research) below.
+    </Note>
+  </Accordion>
+
+  <Accordion title="Codex" icon="/logo/clients/openai.svg">
+    ```bash
+    codex mcp add consensus --url https://mcp.consensus.app/mcp
+    codex mcp login consensus
+    ```
+
+    Or add to `~/.codex/config.toml`:
+
+    ```toml
+    [mcp_servers.consensus]
+    url = "https://mcp.consensus.app/mcp"
+    ```
+  </Accordion>
+
+  <Accordion title="Cursor" icon="/logo/clients/cursor.svg">
+    **One-click:** [Install in Cursor](https://cursor.com/en/install-mcp?name=consensus&config=eyJ1cmwiOiJodHRwczovL21jcC5jb25zZW5zdXMuYXBwL21jcCJ9). Or add to `~/.cursor/mcp.json`:
+
+    ```json
+    {
+      "mcpServers": {
+        "consensus": {
+          "command": "npx",
+          "args": ["-y", "mcp-remote@latest", "https://mcp.consensus.app/mcp"]
+        }
+      }
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="VS Code (GitHub Copilot)" icon="/logo/clients/vscode.svg">
+    Add to your MCP configuration:
+
+    ```json
+    {
+      "servers": {
+        "consensus": {
+          "url": "https://mcp.consensus.app/mcp"
+        }
+      }
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="Windsurf" icon="/logo/clients/windsurf.svg">
+    Add to your MCP configuration:
+
+    ```json
+    {
+      "mcpServers": {
+        "consensus": {
+          "serverUrl": "https://mcp.consensus.app/mcp"
+        }
+      }
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="Other MCP clients" icon="plug">
+    Any client that supports remote MCP servers (Streamable HTTP) works. Point it at `https://mcp.consensus.app/mcp`. If your client supports OAuth, authentication is handled automatically.
+  </Accordion>
+</AccordionGroup>
+
+<Frame caption="Watch: connect Consensus and run your first search">
+  <iframe
+    className="w-full aspect-video rounded-xl"
+    src="https://www.youtube.com/embed/gcMel2guYE8?start=4"
+    title="The Consensus MCP & Claude Connector"
+    frameBorder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    allowFullScreen
+  />
+</Frame>
+
+## Using Consensus with ChatGPT Deep Research
+
+Consensus also works with ChatGPT Deep Research. When Deep Research uses the Consensus app, it can search Consensus for relevant papers and retrieve full paper details for cited results.
+
+<Steps>
+  <Step title="Connect the Consensus app">
+    Connect the Consensus app in ChatGPT using the steps above.
+  </Step>
+  <Step title="Start a Deep Research request">
+    Start a Deep Research request in ChatGPT.
+  </Step>
+  <Step title="Ask ChatGPT to use Consensus">
+    Ask ChatGPT to use Consensus for peer-reviewed research, for example:
+
+    > Use Consensus to research the evidence on exercise for depression. Prioritize systematic reviews, meta-analyses, and randomized controlled trials.
+  </Step>
+</Steps>
+
+Deep Research may run multiple Consensus searches, refine filters, retrieve paper details, and return a cited synthesis with direct links to papers on Consensus.
+
+## Verify Your Connection
+
+Try one of these in your connected client. Each link opens the question pre-filled:
+
+| Ask | Try it |
+| --- | --- |
+| "What does the research say about creatine and cognitive function?" | [Claude](https://claude.ai/new?q=What%20does%20the%20research%20say%20about%20creatine%20and%20cognitive%20function%3F) · [ChatGPT](https://chatgpt.com/?q=What%20does%20the%20research%20say%20about%20creatine%20and%20cognitive%20function%3F) |
+| "Find meta-analyses on mindfulness for anxiety published since 2020" | [Claude](https://claude.ai/new?q=Find%20meta-analyses%20on%20mindfulness%20for%20anxiety%20published%20since%202020) · [ChatGPT](https://chatgpt.com/?q=Find%20meta-analyses%20on%20mindfulness%20for%20anxiety%20published%20since%202020) |
+| "Are there RCTs on intermittent fasting with more than 500 participants?" | [Claude](https://claude.ai/new?q=Are%20there%20RCTs%20on%20intermittent%20fasting%20with%20more%20than%20500%20participants%3F) · [ChatGPT](https://chatgpt.com/?q=Are%20there%20RCTs%20on%20intermittent%20fasting%20with%20more%20than%20500%20participants%3F) |
+| "What is the strongest evidence for and against remote work productivity?" | [Claude](https://claude.ai/new?q=What%20is%20the%20strongest%20evidence%20for%20and%20against%20remote%20work%20productivity%3F) · [ChatGPT](https://chatgpt.com/?q=What%20is%20the%20strongest%20evidence%20for%20and%20against%20remote%20work%20productivity%3F) |
+
+You should see results citing specific papers with titles, journals, years, citation counts, and direct links.
+
+## Plans and Access
+
+<Note>
+  Your results depend on your Consensus plan, not your AI subscription (Claude Pro, ChatGPT Plus, etc. have no effect on Consensus results).
+</Note>
+
+<Tip>
+  No account is needed to get started. Connect directly and try it out.
+</Tip>
+
+| Plan | Papers per Search | Monthly Searches | Extra Features |
+| --- | --- | --- | --- |
+| No Account | 3 | Unlimited | None |
+| Free | 10 | 30 | Full abstracts |
+| Pro | 20 | 250 | Study type, key takeaways |
+| Deep | 20 | 1,000 | Study type, key takeaways |
+| Teams | 20 | 1,000 | Study type, key takeaways |
+
+Create a free account at [consensus.app/sign-up](https://consensus.app/sign-up) or upgrade at [consensus.app/pricing](https://consensus.app/pricing).
+
+## Enterprise and API Key Access
+
+For enterprise access with unlimited rate limits, include your API key as a Bearer token:
+
+```http
+Authorization: Bearer YOUR_API_KEY
+```
+
+Contact Consensus for enterprise API access at [consensus.app/home/api](https://consensus.app/home/api).
+
+## Search Tool
+
+The search tool searches Consensus for peer-reviewed research papers. ChatGPT Deep Research may call this tool multiple times with different queries and filters while building a research report.
+
+### Parameters
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| query | string | Yes | The research question or topic to search for. Use specific academic terminology for best results. |
+| year_min | integer | No | Exclude papers published before this year. |
+| year_max | integer | No | Exclude papers published after this year. |
+| study_types | string array | No | Filter by study design. Values: rct, meta-analysis, systematic review, literature review, case report, non-rct experimental, non-rct observational study, non-rct in vitro, animal. |
+| sjr_max | integer | No | Filter by journal quality (SCImago Journal Rank quartile). 1 is Q1 (highest), 2 is Q2, 3 is Q3, 4 is Q4. |
+| human | boolean | No | Set to true to include only studies involving human subjects. |
+| sample_size_min | integer | No | Exclude studies with sample sizes smaller than this number. |
+| medical_mode | boolean | No | Set to true for clinical, medical, or evidence-based medicine questions. Prioritizes top medical journals and clinical guidelines. |
+| exclude_preprints | boolean | No | Set to true to exclude preprints and return peer-reviewed papers only. |
+| duration_min | integer | No | Minimum study duration in days. Useful for longitudinal or long-term studies. |
+| duration_max | integer | No | Maximum study duration in days. |
+
+### Response
+
+Each search returns:
+
+<ResponseField name="papers" type="array">
+  Array of paper objects with `title`, `authors`, `abstract`, `journal`, `year`, `citation_count`, and `url` (direct link to the paper on Consensus).
+</ResponseField>
+
+<ResponseField name="total_results" type="integer">
+  Total number of papers found.
+</ResponseField>
+
+<ResponseField name="query" type="string">
+  The original search query.
+</ResponseField>
+
+<Note>
+  Pro plans and above also include `study_type` and `takeaway` for each paper. Enterprise includes `doi`.
+</Note>
+
+### Example Prompts
+
+- "What does the research say about the effectiveness of remote work on productivity?"
+- "Find RCTs and meta-analyses since 2020 on cognitive behavioral therapy for anxiety"
+- "Search for high quality human studies on gut microbiome and mental health with at least 100 participants"
+- "Recent research on large language model hallucination from top tier journals"
+- "Use Consensus Deep Research to compare evidence for different treatments for insomnia"
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="OAuth login is only supported for streamable HTTP servers (Codex)">
+    You added the server with `-- --transport http` instead of `--url`. Remove and re-add:
+
+    ```bash
+    codex mcp remove consensus
+    codex mcp add consensus --url https://mcp.consensus.app/mcp
+    codex mcp login consensus
+    ```
+  </Accordion>
+
+  <Accordion title="Authentication successful but server reconnection failed (Claude Code)">
+    Fully quit and restart Claude Code. Do not just use the reconnect option. Your credentials are saved and will work after restart.
+  </Accordion>
+
+  <Accordion title="Tools stop working after a few hours (401 errors)">
+    Your OAuth token has expired. Re-authenticate:
+
+    - **Claude Code:** Type `/mcp`, select Consensus, choose Clear authentication, re-authenticate, then restart Claude Code
+    - **Codex:** Run `codex mcp logout consensus` then `codex mcp login consensus`
+    - **Cursor:** Disconnect and reconnect the server in Settings then Tools and MCP
+    - **Claude Desktop:** Disconnect and reconnect the connector in Settings then Connectors
+    - **ChatGPT:** Disconnect and reconnect the Consensus app from ChatGPT Apps
+  </Accordion>
+
+  <Accordion title="Server shows failed or no tools appear">
+    - Verify the URL includes `/mcp` at the end
+    - Remove and re-add the server using the commands above
+    - Restart your client completely
+  </Accordion>
+
+  <Accordion title="Consensus search has not been loaded yet (Claude Code)">
+    This is normal. Claude loads tool definitions on demand when many tools are present. Retry the query and it will work on the second attempt.
+  </Accordion>
+
+  <Accordion title="ChatGPT Deep Research is not using Consensus">
+    Confirm the Consensus app is connected in ChatGPT Apps, then ask Deep Research to use Consensus explicitly. For example:
+
+    > Use Consensus to find peer-reviewed papers on this question and cite the strongest evidence.
+
+    Deep Research decides when to call connected tools, so it may not call Consensus for questions that are not research-focused.
+  </Accordion>
+
+  <Accordion title="No results found">
+    Try broadening your search query or removing filters. Use specific academic terminology rather than casual language.
+  </Accordion>
+
+  <Accordion title="Rate limit exceeded (429 error)">
+    Wait a few moments before searching again. If using automated workflows, implement backoff logic between requests.
+  </Accordion>
+</AccordionGroup>
+
+## Security
+
+- **Endpoint:** Only connect to the official URL: `https://mcp.consensus.app/mcp`
+- **API keys:** Store securely using environment variables. Never share keys in prompts or public conversations. Rotate if compromised.
+- **Data handling:** Search queries are sent to the Consensus API over HTTPS/TLS. Results contain publicly available academic paper metadata. No personal data is stored from MCP requests.
+
+## Supported Platforms
+
+| Platform | Auth | Status |
+| --- | --- | --- |
+| Claude Desktop | OAuth | Supported |
+| ChatGPT | OAuth | Supported |
+| ChatGPT Deep Research | OAuth | Supported |
+| Claude Code | OAuth | Supported |
+| Codex | OAuth | Supported |
+| Cursor | OAuth | Supported |
+| VS Code (GitHub Copilot) | Config | Supported |
+| Windsurf | Config | Supported |
+| Other MCP Clients | Bearer token | Supported |
+
+## Additional Resources
+
+<CardGroup cols={3}>
+  <Card title="Consensus Website" icon="globe" href="https://consensus.app">
+    Explore the Consensus research platform.
+  </Card>
+  <Card title="API Documentation" icon="code" href="/api-reference/query-for-relevant-papers">
+    Full reference for the Consensus search API.
+  </Card>
+  <Card title="MCP Specification" icon="book-open" href="https://modelcontextprotocol.io">
+    Learn more about the Model Context Protocol.
+  </Card>
+</CardGroup>

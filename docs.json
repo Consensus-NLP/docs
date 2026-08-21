@@ -1,0 +1,88 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "mint",
+  "name": "Consensus",
+  "colors": {
+    "primary": "#068EF1",
+    "light": "#25A4FF",
+    "dark": "#006FCE"
+  },
+  "favicon": "/favicon.svg",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "API",
+        "groups": [
+          {
+            "group": "References",
+            "openapi": "openapi.json",
+            "pages": [
+              "GET /v1/search",
+              "GET /v1/quick_search"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "MCP",
+        "groups": [
+          {
+            "group": "Introduction",
+            "pages": [
+              "consensus-mcp"
+            ]
+          }
+        ]
+      }
+    ],
+    "global": {
+      "anchors": [
+        {
+          "anchor": "Help Center",
+          "href": "https://help.consensus.app",
+          "icon": "life-ring"
+        },
+        {
+          "anchor": "Consensus",
+          "href": "https://consensus.app",
+          "icon": "globe"
+        }
+      ]
+    }
+  },
+  "logo": {
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg"
+  },
+  "navbar": {
+    "links": [
+      {
+        "label": "Support",
+        "href": "mailto:support@consensus.app"
+      }
+    ],
+    "primary": {
+      "type": "button",
+      "label": "Go to Consensus",
+      "href": "https://consensus.app"
+    }
+  },
+  "contextual": {
+    "options": [
+      "copy",
+      "view",
+      "chatgpt",
+      "claude",
+      "perplexity",
+      "mcp",
+      "cursor",
+      "vscode"
+    ]
+  },
+  "footer": {
+    "socials": {
+      "x": "https://twitter.com/ConsensusNLP",
+      "linkedin": "https://www.linkedin.com/company/consensus-nlp/"
+    }
+  }
+}
